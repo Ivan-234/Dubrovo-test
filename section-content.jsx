@@ -102,7 +102,7 @@ const Location = ({ distances }) => (
       {/* Карта района — Яндекс.Карты */}
       <div style={{ position: "relative", aspectRatio: "16/11", background: "#EDE3CF", border: "1px solid #D9CDB0", overflow: "hidden" }}>
         <iframe
-          src="https://yandex.ru/map-widget/v1/?ll=61.061%2C56.876&z=13&pt=61.061%2C56.876%2Cpm2dgl"
+          src="https://yandex.ru/map-widget/v1/?ll=61.0594%2C56.8728&z=16&pt=61.0594%2C56.8728%2Cpm2dgl&text=Верхнее%20Дуброво%2C%20Манежная%201"
           width="100%"
           height="100%"
           frameBorder="0"
