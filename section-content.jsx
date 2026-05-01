@@ -134,6 +134,7 @@ const Location = ({ distances }) => (
             <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 11, color: "#7A6A4A", letterSpacing: 1, minWidth: 60, textAlign: "right" }}>{d.time}</span>
           </div>
         ))}
+
       </div>
     </div>
   </section>

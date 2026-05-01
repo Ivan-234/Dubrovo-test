@@ -57,7 +57,7 @@ const Hero = ({ onGoToMap }) => (
         <a href="#contact" style={{ color: "#F5F0E6", opacity: 0.85, textDecoration: "none" }}>Контакты</a>
       </nav>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12 }}>+7 919 369 42 38</span>
+        <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12 }}>+7 995 088 77 21</span>
       </div>
     </header>
 

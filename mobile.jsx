@@ -139,7 +139,7 @@ const MobileHome = ({ onGoToMap }) => (
         Записаться на экскурсию
       </button>
       <button style={{ width: "100%", marginTop: 8, padding: "14px 0", background: "transparent", color: "#F5F0E6", border: "1px solid rgba(245,240,230,0.4)", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase" }}>
-        +7 919 369 42 38
+        +7 995 088 77 21
       </button>
     </div>
   </div>
@@ -224,7 +224,7 @@ const MobileInfo = ({ data }) => (
       <div style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 9, letterSpacing: 1.5, color: "#7A6A4A", textTransform: "uppercase" }}>⎯ Контакты</div>
       <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 28, fontWeight: 400, marginTop: 4, letterSpacing: -0.5 }}>Связаться</h2>
       <div style={{ marginTop: 16 }}>
-        {[["Телефон","+7 919 369 42 38"],["Email","support@newdubrovo.ru"]].map(([l, v], i) => (
+        {[["Телефон","+7 995 088 77 21"],["Email","sales@newdubrovo.ru"]].map(([l, v], i) => (
           <div key={i} style={{ padding: "14px 0", borderTop: "1px solid #E0D6BE", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, color: "#7A6A4A", letterSpacing: 1.5, textTransform: "uppercase" }}>{l}</span>
             <span style={{ fontFamily: "Fraunces, serif", fontSize: 15 }}>{v}</span>

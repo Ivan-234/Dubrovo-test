@@ -168,8 +168,8 @@ const ContactForm = () => {
           </p>
 
           <div style={{ marginTop: 56 }}>
-            <ContactRow label="Телефон" value="+7 919 369 42 38"/>
-            <ContactRow label="Email" value="support@newdubrovo.ru"/>
+            <ContactRow label="Телефон" value="+7 995 088 77 21"/>
+            <ContactRow label="Email" value="sales@newdubrovo.ru"/>
           </div>
         </div>
 
@@ -272,7 +272,7 @@ const Footer = () => (
       </div>
       <FooterCol title="Сайт" items={["О посёлке", "Преимущества", "Локация", "Генплан", "Инфраструктура"]}/>
       <FooterCol title="Покупателю" items={["Свободные участки", "Кадастровые номера", "Коммуникации", "Документы", "Условия покупки"]}/>
-      <FooterCol title="Контакты" items={["+7 919 369 42 38", "support@newdubrovo.ru"]}/>
+      <FooterCol title="Контакты" items={["+7 995 088 77 21", "sales@newdubrovo.ru"]}/>
     </div>
     <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 28, fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.55 }}>
       <span>© 2026 Нью Дуброво · ИП «Дуброво»</span>
