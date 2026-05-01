@@ -102,7 +102,7 @@ const Location = ({ distances }) => (
       {/* Карта района — Яндекс.Карты */}
       <div style={{ position: "relative", aspectRatio: "16/11", background: "#EDE3CF", border: "1px solid #D9CDB0", overflow: "hidden" }}>
         <iframe
-          src="https://yandex.ru/map-widget/v1/?ll=65.787%2C57.158&z=11&pt=65.787%2C57.158%2Cpm2dgl"
+          src="https://yandex.ru/map-widget/v1/?ll=61.061%2C56.876&z=13&pt=61.061%2C56.876%2Cpm2dgl"
           width="100%"
           height="100%"
           frameBorder="0"
@@ -134,15 +134,6 @@ const Location = ({ distances }) => (
             <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 11, color: "#7A6A4A", letterSpacing: 1, minWidth: 60, textAlign: "right" }}>{d.time}</span>
           </div>
         ))}
-        <button style={{
-          marginTop: 32, padding: "14px 24px",
-          background: "transparent", color: "#2A3A2E",
-          border: "1px solid #2A3A2E", cursor: "pointer", borderRadius: 0,
-          fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 500,
-          letterSpacing: 1.5, textTransform: "uppercase",
-        }}>
-          Построить маршрут
-        </button>
       </div>
     </div>
   </section>
