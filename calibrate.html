@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Нью Дуброво — Калибровка пинов</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #2A3A2E; color: #F5F0E6; font-family: ui-monospace, Menlo, monospace; min-height: 100vh; }
+  body { display: grid; grid-template-columns: 320px 1fr; }
+
+  .sidebar { background: #1F2A22; padding: 20px; height: 100vh; overflow-y: auto; border-right: 1px solid #3F5638; }
+  .sidebar h1 { font-family: Georgia, serif; font-size: 22px; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.5px; }
+  .sidebar .sub { font-size: 11px; color: #C8D4B8; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar .help { font-size: 12px; line-height: 1.5; color: #B8C8A8; padding: 12px; background: #2A3A2E; border: 1px solid #3F5638; margin-bottom: 16px; }
+  .sidebar .help b { color: #F5F0E6; }
+
+  .toolbar { display: flex; gap: 6px; margin-bottom: 12px; }
+  .toolbar button {
+    flex: 1; padding: 10px 8px;
+    background: transparent; color: #F5F0E6;
+    border: 1px solid #3F5638; cursor: pointer;
+    font-family: inherit; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .toolbar button:hover { background: #3F5638; }
+  .toolbar button.primary { background: #6B7E5A; border-color: #6B7E5A; color: #1F2A22; font-weight: 700; }
+  .toolbar button.primary:hover { background: #C8D4B8; }
+
+  .progress { font-size: 11px; color: #B8C8A8; margin-bottom: 8px; letter-spacing: 0.5px; }
+  .progress b { color: #F5F0E6; }
+
+  .plot-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .plot-list button {
+    padding: 8px 0;
+    background: #2A3A2E; color: #F5F0E6;
+    border: 1px solid #3F5638; cursor: pointer;
+    font-family: inherit; font-size: 11px; font-weight: 600;
+  }
+  .plot-list button.placed { background: #3F5638; border-color: #6B7E5A; }
+  .plot-list button.active { background: #C8D4B8; color: #1F2A22; border-color: #C8D4B8; }
+  .plot-list button:hover { border-color: #C8D4B8; }
+
+  .footer-actions { margin-top: 16px; }
+  .footer-actions button {
+    width: 100%; padding: 12px;
+    background: #6B7E5A; color: #1F2A22;
+    border: none; cursor: pointer;
+    font-family: inherit; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .footer-actions button.secondary { background: transparent; color: #F5F0E6; border: 1px solid #3F5638; }
+  .footer-actions button:hover { background: #C8D4B8; }
+  .footer-actions button.secondary:hover { background: #3F5638; }
+
+  /* Map area */
+  .map-wrap { position: relative; overflow: auto; height: 100vh; background: #F5F0E6; }
+  .map-canvas { position: relative; }
+  .map-canvas img { display: block; user-select: none; -webkit-user-drag: none; }
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(42,58,46,0.92);
+    color: #F5F0E6;
+    border: 2px solid #F5F0E6;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 700;
+    cursor: grab;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 5;
+  }
+  .pin.active {
+    background: #6B7E5A;
+    width: 34px; height: 34px;
+    font-size: 13px;
+    z-index: 10;
+    box-shadow: 0 0 0 4px rgba(107,126,90,0.35);
+  }
+  .pin.unplaced {
+    background: #9C7A6A;
+  }
+  .pin:active { cursor: grabbing; }
+
+  .map-canvas.placing { cursor: crosshair; }
+
+  /* Output overlay */
+  #export-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  #export-modal.show { display: flex; }
+  #export-modal .box {
+    background: #1F2A22; border: 1px solid #6B7E5A;
+    padding: 24px; max-width: 80vw; max-height: 80vh; overflow: auto;
+    width: 700px;
+  }
+  #export-modal pre {
+    background: #0F1612; padding: 16px; font-size: 11px;
+    color: #C8D4B8; max-height: 50vh; overflow: auto;
+    white-space: pre-wrap; word-break: break-all;
+  }
+  #export-modal .row { display: flex; gap: 8px; margin-top: 12px; }
+  #export-modal button {
+    flex: 1; padding: 10px;
+    background: #6B7E5A; color: #1F2A22; border: none;
+    font-family: inherit; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    cursor: pointer;
+  }
+  #export-modal button.secondary { background: transparent; color: #F5F0E6; border: 1px solid #3F5638; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <h1>Калибровка пинов</h1>
+  <div class="sub">Нью Дуброво · 60 участков</div>
+
+  <div class="help">
+    <b>Как:</b><br/>
+    1. Выберите номер участка слева<br/>
+    2. Кликните по центру нужного участка на плане<br/>
+    3. Пин встанет туда; перетаскивайте если нужно<br/>
+    4. Когда все 60 размечены — «Экспорт»
+  </div>
+
+  <div class="progress">Размечено: <b id="progress-count">0</b> / <span id="progress-total">60</span></div>
+
+  <div class="toolbar">
+    <button id="btn-clear-current">Очистить активный</button>
+    <button id="btn-next">Следующий →</button>
+  </div>
+
+  <div class="plot-list" id="plot-list"></div>
+
+  <div class="footer-actions">
+    <button id="btn-export" class="primary">Экспорт JSON</button>
+    <button id="btn-save-local" class="secondary">Сохранить в браузер</button>
+    <button id="btn-load-local" class="secondary">Загрузить из браузера</button>
+    <button id="btn-reset" class="secondary">Сброс всех пинов</button>
+  </div>
+</aside>
+
+<main class="map-wrap">
+  <div class="map-canvas" id="canvas">
+    <img src="assets/genplan.jpg?v=1" alt="Генплан" id="genplan-img"/>
+  </div>
+</main>
+
+<div id="export-modal">
+  <div class="box">
+    <h2 style="font-family: Georgia, serif; font-weight: 400; margin-bottom: 8px;">Экспорт координат</h2>
+    <p style="font-size: 12px; color: #B8C8A8; margin-bottom: 12px;">Скопируйте JSON ниже и пришлите ассистенту — он применит координаты к data.js.</p>
+    <pre id="export-output"></pre>
+    <div class="row">
+      <button id="btn-copy">Копировать</button>
+      <button id="btn-close" class="secondary">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// Данные: 60 участков, начинаем без координат
+// ─────────────────────────────────────────────────────────────
+const PLOT_IDS = Array.from({ length: 60 }, (_, i) => i + 1);
+
+const STORAGE_KEY = "dubrovo_calibration_v1";
+
+// state.coords: { [id]: { x, y } } — координаты в % исходного изображения (1800×2961)
+let state = {
+  coords: {},
+  activeId: 1,
+};
+
+const IMG_W = 1800;
+const IMG_H = 2961;
+
+// ─────────────────────────────────────────────────────────────
+// DOM
+// ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById("canvas");
+const img = document.getElementById("genplan-img");
+const plotListEl = document.getElementById("plot-list");
+const progressCount = document.getElementById("progress-count");
+const exportModal = document.getElementById("export-modal");
+const exportOutput = document.getElementById("export-output");
+
+// ─────────────────────────────────────────────────────────────
+// Render
+// ─────────────────────────────────────────────────────────────
+function renderPlotList() {
+  plotListEl.innerHTML = "";
+  PLOT_IDS.forEach(id => {
+    const btn = document.createElement("button");
+    btn.textContent = id;
+    btn.dataset.id = id;
+    if (state.coords[id]) btn.classList.add("placed");
+    if (state.activeId === id) btn.classList.add("active");
+    btn.onclick = () => { state.activeId = id; render(); };
+    plotListEl.appendChild(btn);
+  });
+}
+
+function renderPins() {
+  // Удаляем старые пины
+  canvas.querySelectorAll(".pin").forEach(el => el.remove());
+
+  PLOT_IDS.forEach(id => {
+    const c = state.coords[id];
+    if (!c) return;
+    const pin = document.createElement("div");
+    pin.className = "pin" + (state.activeId === id ? " active" : "");
+    pin.textContent = id;
+    pin.dataset.id = id;
+    pin.style.left = c.x + "%";
+    pin.style.top = c.y + "%";
+    enableDrag(pin, id);
+    canvas.appendChild(pin);
+  });
+}
+
+function renderProgress() {
+  progressCount.textContent = Object.keys(state.coords).length;
+}
+
+function render() {
+  renderPlotList();
+  renderPins();
+  renderProgress();
+}
+
+// ─────────────────────────────────────────────────────────────
+// Click on canvas → place active pin
+// ─────────────────────────────────────────────────────────────
+canvas.addEventListener("click", (e) => {
+  // Не считаем клик если попали по самому пину (drag handle)
+  if (e.target.classList.contains("pin")) return;
+
+  const rect = img.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+  if (x < 0 || x > 100 || y < 0 || y > 100) return;
+
+  state.coords[state.activeId] = { x: +x.toFixed(2), y: +y.toFixed(2) };
+
+  // Авто-переход на следующий неразмеченный
+  const next = PLOT_IDS.find(id => id > state.activeId && !state.coords[id])
+            || PLOT_IDS.find(id => !state.coords[id]);
+  if (next) state.activeId = next;
+
+  saveLocal();
+  render();
+});
+
+// ─────────────────────────────────────────────────────────────
+// Drag pin to adjust
+// ─────────────────────────────────────────────────────────────
+function enableDrag(pin, id) {
+  let dragging = false;
+  pin.addEventListener("mousedown", (e) => {
+    e.stopPropagation();
+    dragging = true;
+    state.activeId = id;
+    render();
+  });
+  pin.addEventListener("click", (e) => {
+    e.stopPropagation();
+    state.activeId = id;
+    render();
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    const rect = img.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    if (x < 0 || x > 100 || y < 0 || y > 100) return;
+    state.coords[id] = { x: +x.toFixed(2), y: +y.toFixed(2) };
+    pin.style.left = x + "%";
+    pin.style.top = y + "%";
+  });
+  document.addEventListener("mouseup", () => {
+    if (dragging) {
+      dragging = false;
+      saveLocal();
+      renderProgress();
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// Buttons
+// ─────────────────────────────────────────────────────────────
+document.getElementById("btn-clear-current").onclick = () => {
+  delete state.coords[state.activeId];
+  saveLocal();
+  render();
+};
+document.getElementById("btn-next").onclick = () => {
+  const idx = PLOT_IDS.indexOf(state.activeId);
+  state.activeId = PLOT_IDS[(idx + 1) % PLOT_IDS.length];
+  render();
+};
+document.getElementById("btn-reset").onclick = () => {
+  if (!confirm("Удалить все размеченные пины?")) return;
+  state.coords = {};
+  state.activeId = 1;
+  saveLocal();
+  render();
+};
+
+document.getElementById("btn-export").onclick = () => {
+  const lines = PLOT_IDS.map(id => {
+    const c = state.coords[id];
+    if (!c) return `  // ${id}: НЕ РАЗМЕЧЕН`;
+    return `  { id: ${id}, cx: ${c.x}, cy: ${c.y} },`;
+  });
+  exportOutput.textContent = "[\n" + lines.join("\n") + "\n]";
+  exportModal.classList.add("show");
+};
+document.getElementById("btn-close").onclick = () => exportModal.classList.remove("show");
+document.getElementById("btn-copy").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(exportOutput.textContent);
+    alert("Скопировано!");
+  } catch (e) {
+    alert("Не удалось скопировать. Выделите текст вручную.");
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+// LocalStorage persistence
+// ─────────────────────────────────────────────────────────────
+function saveLocal() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.coords));
+  } catch (e) {}
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state.coords = JSON.parse(raw);
+  } catch (e) {}
+}
+
+document.getElementById("btn-save-local").onclick = () => {
+  saveLocal();
+  alert("Сохранено в браузер. При перезагрузке пины восстановятся.");
+};
+document.getElementById("btn-load-local").onclick = () => {
+  loadLocal();
+  render();
+};
+
+// Auto-load on start
+loadLocal();
+render();
+
+// Keyboard: arrows to nav, Enter for next
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  const idx = PLOT_IDS.indexOf(state.activeId);
+  if (e.key === "ArrowRight" || e.key === "Enter") {
+    state.activeId = PLOT_IDS[(idx + 1) % PLOT_IDS.length];
+    render();
+  } else if (e.key === "ArrowLeft") {
+    state.activeId = PLOT_IDS[(idx - 1 + PLOT_IDS.length) % PLOT_IDS.length];
+    render();
+  } else if (e.key === "Delete" || e.key === "Backspace") {
+    delete state.coords[state.activeId];
+    saveLocal();
+    render();
+  }
+});
+</script>
+</body>
+</html>

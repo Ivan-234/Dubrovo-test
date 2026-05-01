@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><body style="margin:0;background:#fff">
+<canvas id="c" style="max-width:100%"></canvas>
+<div id="status">loading...</div>
+<script type="module">
+try {
+  const pdfjs = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
+  const r = await fetch('genplan.pdf');
+  const data = new Uint8Array(await r.arrayBuffer());
+  document.getElementById('status').textContent = 'parsing...';
+  const pdf = await pdfjs.getDocument({ data }).promise;
+  const page = await pdf.getPage(1);
+  const vp = page.getViewport({ scale: 0.6 });
+  const canvas = document.getElementById('c');
+  canvas.width = vp.width; canvas.height = vp.height;
+  document.getElementById('status').textContent = 'rendering ' + vp.width + 'x' + vp.height;
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+  document.getElementById('status').textContent = 'done';
+  window.__done = true;
+} catch (e) {
+  document.getElementById('status').textContent = 'err: ' + e.message;
+}
+</script></body></html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Нью Дуброво — Лендинг</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #F5F0E6; color: #2A3A2E; font-family: Inter, system-ui, sans-serif; scroll-behavior: smooth; }
+  .plot-rect { transition: opacity 0.15s, stroke-width 0.15s; }
+  .plot-rect:hover { stroke-width: 2.5 !important; filter: brightness(0.95); }
+  input::placeholder, textarea::placeholder { color: #B8AC90; }
+  ::selection { background: #C8D4B8; color: #2A3A2E; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js?v=9"></script>
+<script type="text/babel" src="icons.jsx?v=9"></script>
+<script type="text/babel" src="masterplan.jsx?v=9"></script>
+<script type="text/babel" src="plot-card.jsx?v=9"></script>
+<script type="text/babel" src="section-hero.jsx?v=9"></script>
+<script type="text/babel" src="section-content.jsx?v=9"></script>
+<script type="text/babel" src="section-map-form.jsx?v=9"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+const DesktopLanding = () => {
+  const data = window.DUBROVO_DATA;
+  const [selectedId, setSelectedId] = useState(null);
+
+  // Подхватываем ручные изменения статусов из админки
+  const [overrides, setOverrides] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("newdubrovo_plot_overrides") || "{}"); }
+    catch { return {}; }
+  });
+  useEffect(() => {
+    const sync = () => {
+      try { setOverrides(JSON.parse(localStorage.getItem("newdubrovo_plot_overrides") || "{}")); }
+      catch {}
+    };
+    window.addEventListener("storage", sync);
+    const poll = setInterval(sync, 1500);
+    return () => { window.removeEventListener("storage", sync); clearInterval(poll); };
+  }, []);
+  const plots = useMemo(() => data.plots.map(p => {
+    const o = overrides[p.id];
+    return o && o.status ? { ...p, status: o.status } : p;
+  }), [data.plots, overrides]);
+
+  const onGoToMap = () => {
+    const target = document.querySelector('#map');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <div style={{ background: "#F5F0E6" }}>
+      <Hero onGoToMap={onGoToMap}/>
+      <About/>
+      <Advantages data={data.advantages}/>
+      <Location distances={data.distances}/>
+      <Infrastructure items={data.infrastructure}/>
+      <MapSection plots={plots} selectedId={selectedId} setSelectedId={setSelectedId}/>
+      <ContactForm/>
+      <Footer/>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<DesktopLanding/>);
+</script>
+
+</body>
+</html>

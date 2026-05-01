@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Нью Дуброво — База</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@300..600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: #F5F0E6;
+    color: #2A3A2E;
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  input, textarea, select { font: inherit; color: inherit; }
+  table { border-collapse: collapse; width: 100%; }
+
+  /* Login */
+  .login-wrap {
+    min-height: 100vh; display: grid; place-items: center;
+    background: radial-gradient(120% 80% at 50% 20%, #2A3A2E 0%, #1B2620 100%);
+    color: #F5F0E6;
+  }
+  .login-card {
+    width: 460px; max-width: 92vw;
+    background: #F5F0E6; color: #2A3A2E;
+    padding: 56px 48px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .login-eyebrow {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: #7A6A4A;
+  }
+  .login-title {
+    font-family: "Fraunces", serif;
+    font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -1.2px;
+    margin: 16px 0 6px;
+  }
+  .login-title em { font-style: italic; color: #6B7E5A; }
+  .login-sub { color: #5D5340; font-size: 13px; line-height: 1.5; margin-bottom: 36px; }
+  .login-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #7A6A4A; margin-bottom: 8px; display: block;
+  }
+  .login-input {
+    width: 100%; padding: 14px 16px;
+    background: #FFFFFF; border: 1px solid #D9CDB0;
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    outline: none; letter-spacing: 0.5px;
+  }
+  .login-input:focus { border-color: #2A3A2E; }
+  .login-input.error { border-color: #9C4A3A; background: #FBEEEA; }
+  .login-btn {
+    width: 100%; margin-top: 20px; padding: 16px 0;
+    background: #2A3A2E; color: #F5F0E6;
+    border: none;
+    font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .login-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .login-status {
+    margin-top: 16px; min-height: 18px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    letter-spacing: 1px; color: #9C4A3A;
+  }
+  .login-foot {
+    margin-top: 36px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 9px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #7A6A4A;
+    display: flex; justify-content: space-between;
+  }
+
+  /* Shell */
+  .shell { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    background: #2A3A2E; color: #F5F0E6;
+    border-bottom: 1px solid #1B2620;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-logo {
+    width: 32px; height: 32px; border: 1.5px solid #F5F0E6;
+    display: grid; place-items: center;
+    font-family: "Fraunces", serif; font-size: 14px;
+  }
+  .brand-name { font-family: "Fraunces", serif; font-size: 18px; letter-spacing: -0.3px; }
+  .brand-sub {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 24px; }
+  .topbar-right .meta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7;
+  }
+  .topbar-btn {
+    background: transparent; color: #F5F0E6;
+    border: 1px solid rgba(245,240,230,0.3);
+    padding: 8px 14px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .topbar-btn:hover { background: rgba(245,240,230,0.08); }
+  .topbar-btn.danger:hover { background: #5C2E22; border-color: #5C2E22; }
+
+  .tabs {
+    display: flex; gap: 0;
+    background: #EDE3CF; border-bottom: 1px solid #D9CDB0;
+    padding: 0 32px;
+  }
+  .tab {
+    background: transparent; border: none;
+    padding: 16px 22px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #5D5340;
+    border-bottom: 2px solid transparent;
+  }
+  .tab.active { color: #2A3A2E; border-bottom-color: #2A3A2E; background: #F5F0E6; }
+  .tab .count {
+    display: inline-block; margin-left: 8px;
+    background: rgba(0,0,0,0.06); padding: 2px 8px;
+    font-size: 10px; letter-spacing: 1px;
+  }
+  .tab.active .count { background: #2A3A2E; color: #F5F0E6; }
+
+  .panel { padding: 28px 32px 80px; }
+
+  .toolbar {
+    display: flex; gap: 12px; align-items: center;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .search {
+    flex: 1; min-width: 240px;
+    background: #FFFFFF; border: 1px solid #D9CDB0;
+    padding: 11px 16px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    outline: none;
+  }
+  .search:focus { border-color: #2A3A2E; }
+  .seg {
+    display: inline-flex; border: 1px solid #D9CDB0; background: #FFFFFF;
+  }
+  .seg button {
+    background: transparent; border: none;
+    padding: 10px 16px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #5D5340;
+    border-right: 1px solid #D9CDB0;
+  }
+  .seg button:last-child { border-right: none; }
+  .seg button.active { background: #2A3A2E; color: #F5F0E6; }
+
+  .btn {
+    background: #2A3A2E; color: #F5F0E6;
+    border: none; padding: 11px 18px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .btn.ghost {
+    background: transparent; color: #2A3A2E; border: 1px solid #D9CDB0;
+  }
+  .btn.ghost:hover { background: #EDE3CF; }
+  .btn.danger { background: #7A2F22; }
+
+  /* Table */
+  .table-wrap {
+    background: #FFFFFF; border: 1px solid #E0D6BE;
+    overflow: auto;
+  }
+  table thead th {
+    text-align: left;
+    background: #EDE3CF;
+    border-bottom: 1px solid #D9CDB0;
+    padding: 12px 16px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #5D5340;
+    white-space: nowrap;
+  }
+  table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #F0E8D5;
+    vertical-align: top;
+    font-size: 13px;
+  }
+  table tbody tr:hover td { background: #FAF6EC; }
+  table tbody tr.selected td { background: #F0E8D5; }
+  td.num, th.num { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #5D5340; }
+  td.name { font-family: "Fraunces", serif; font-size: 16px; font-weight: 400; }
+  td.phone { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  td.actions { text-align: right; white-space: nowrap; }
+
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid;
+  }
+  .badge.new      { color: #3F5638; border-color: #6B7E5A; background: #EAF0DD; }
+  .badge.contact  { color: #5C5234; border-color: #A88B4A; background: #F4ECD2; }
+  .badge.viewing  { color: #5A3C70; border-color: #8B70A8; background: #EFE6F4; }
+  .badge.reserved { color: #7A4A2E; border-color: #B07A4A; background: #F4E5D2; }
+  .badge.closed   { color: #2D3B30; border-color: #2A3A2E; background: #DCE3DA; }
+  .badge.lost     { color: #7A2F22; border-color: #9C4A3A; background: #F4DCD6; }
+  .badge.free     { color: #3F5638; border-color: #6B7E5A; background: #EAF0DD; }
+  .badge.sold     { color: #7A4A3E; border-color: #9C7A6A; background: #ECDED6; }
+  .badge.reconstruction { color: #1B4F94; border-color: #2E78D9; background: #DCE7F4; }
+
+  .icon-btn {
+    background: transparent; border: 1px solid #D9CDB0;
+    padding: 6px 10px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase; color: #2A3A2E;
+    margin-left: 4px;
+  }
+  .icon-btn:hover { background: #EDE3CF; }
+  .icon-btn.danger { color: #7A2F22; border-color: #DCB6A8; }
+  .icon-btn.danger:hover { background: #FBEEEA; border-color: #9C4A3A; }
+
+  .empty {
+    padding: 80px 40px; text-align: center; background: #FFFFFF;
+    border: 1px solid #E0D6BE;
+  }
+  .empty h3 { font-family: "Fraunces", serif; font-size: 32px; font-weight: 300; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .empty p { color: #5D5340; }
+
+  /* Drawer */
+  .drawer-back {
+    position: fixed; inset: 0;
+    background: rgba(20, 24, 18, 0.45);
+    display: none; z-index: 100;
+  }
+  .drawer-back.open { display: block; }
+  .drawer {
+    position: fixed; right: 0; top: 0; bottom: 0;
+    width: 520px; max-width: 96vw;
+    background: #F5F0E6;
+    transform: translateX(100%); transition: transform 0.25s ease;
+    z-index: 101;
+    display: flex; flex-direction: column;
+    box-shadow: -20px 0 60px rgba(0,0,0,0.18);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head {
+    padding: 24px 28px;
+    background: #2A3A2E; color: #F5F0E6;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .drawer-head .eyebrow {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 2px; text-transform: uppercase; opacity: 0.7;
+  }
+  .drawer-head h2 {
+    font-family: "Fraunces", serif; font-weight: 300; font-size: 30px;
+    letter-spacing: -0.5px; margin-top: 6px;
+  }
+  .drawer-close {
+    background: transparent; border: 1px solid rgba(245,240,230,0.3);
+    color: #F5F0E6; padding: 6px 12px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .drawer-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .drawer-row {
+    padding: 12px 0; border-bottom: 1px solid #E0D6BE;
+    display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: baseline;
+  }
+  .drawer-row .lbl {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #7A6A4A;
+  }
+  .drawer-row .val { font-size: 14px; word-break: break-word; }
+  .drawer-section-title {
+    margin-top: 28px; margin-bottom: 12px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #7A6A4A;
+  }
+  .note {
+    padding: 12px 14px; background: #FFFFFF; border: 1px solid #E0D6BE;
+    margin-bottom: 8px; font-size: 13px; line-height: 1.5;
+  }
+  .note .meta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1px; color: #7A6A4A; margin-bottom: 4px;
+  }
+  .note-form { display: flex; gap: 8px; align-items: stretch; margin-top: 8px; }
+  .note-form textarea {
+    flex: 1; min-height: 64px; resize: vertical;
+    background: #FFFFFF; border: 1px solid #D9CDB0;
+    padding: 10px 12px; font-family: "Inter", sans-serif; font-size: 13px; outline: none;
+  }
+  .note-form textarea:focus { border-color: #2A3A2E; }
+
+  .status-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .status-grid button {
+    background: #FFFFFF; border: 1px solid #D9CDB0;
+    padding: 8px 12px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .status-grid button.active { background: #2A3A2E; color: #F5F0E6; border-color: #2A3A2E; }
+
+  /* Plot grid */
+  .plot-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .plot-card {
+    background: #FFFFFF; border: 1px solid #E0D6BE;
+    padding: 14px;
+    cursor: pointer; transition: border-color 0.1s;
+  }
+  .plot-card:hover { border-color: #2A3A2E; }
+  .plot-card .num { font-family: "Fraunces", serif; font-size: 28px; font-weight: 300; }
+  .plot-card .area { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #7A6A4A; margin-top: 2px; letterSpacing: 1px; }
+  .plot-card .badge { margin-top: 10px; }
+  .plot-card.f-free   { background: #EAF0DD; }
+  .plot-card.f-reserved { background: #F4ECD2; }
+  .plot-card.f-sold     { background: #ECDED6; }
+  .plot-card.f-reconstruction { background: #DCE7F4; }
+
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: #FFFFFF; border: 1px solid #E0D6BE;
+    padding: 20px;
+  }
+  .stat .v { font-family: "Fraunces", serif; font-size: 36px; font-weight: 300; line-height: 1; letter-spacing: -1px; }
+  .stat .l {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #7A6A4A; margin-top: 8px;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #2A3A2E; color: #F5F0E6;
+    padding: 12px 20px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border: 1px solid #1B2620;
+    z-index: 200;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="data.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+const PASSWORD = "you-will-not-ever-hack-this-password-a9eS4bmME@";
+const SESSION_KEY = "newdubrovo_admin_session_v1";
+const ATTEMPT_KEY = "newdubrovo_admin_attempts_v1";
+const LEADS_KEY = "newdubrovo_leads";
+const PLOT_OVERRIDES_KEY = "newdubrovo_plot_overrides";
+
+const SESSION_TTL_MS = 6 * 60 * 60 * 1000; // 6h
+
+const STATUS_LABELS = {
+  new: "Новая",
+  contact: "Связались",
+  viewing: "Показ",
+  reserved: "Бронь",
+  closed: "Сделка",
+  lost: "Отказ",
+};
+const STATUS_ORDER = ["new", "contact", "viewing", "reserved", "closed", "lost"];
+const PLOT_STATUS_LABELS = { free: "Свободен", reserved: "Бронь", sold: "Продан", reconstruction: "Реконструкция" };
+
+// ---------- Utilities ----------
+function readJSON(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; }
+  catch { return fallback; }
+}
+function writeJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+function fmtDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(+d)) return "—";
+  const day = String(d.getDate()).padStart(2,"0");
+  const mon = String(d.getMonth()+1).padStart(2,"0");
+  const yr = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  return `${day}.${mon}.${yr} ${hh}:${mm}`;
+}
+function csvEscape(v) {
+  if (v == null) return "";
+  const s = String(v);
+  return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(csvEscape).join(";")).join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+}
+
+// ---------- Login ----------
+function LoginScreen({ onPass }) {
+  const [pwd, setPwd] = useState("");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [waitMs, setWaitMs] = useState(0);
+  const inputRef = useRef(null);
+
+  // Recover ongoing penalty
+  useEffect(() => {
+    const at = readJSON(ATTEMPT_KEY, { count: 0, lockUntil: 0 });
+    const left = at.lockUntil - Date.now();
+    if (left > 0) {
+      setBusy(true); setWaitMs(left);
+      const tick = setInterval(() => {
+        const ms = at.lockUntil - Date.now();
+        if (ms <= 0) { clearInterval(tick); setBusy(false); setWaitMs(0); inputRef.current?.focus(); }
+        else setWaitMs(ms);
+      }, 200);
+      return () => clearInterval(tick);
+    }
+    inputRef.current?.focus();
+  }, []);
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (busy) return;
+    if (pwd === PASSWORD) {
+      writeJSON(ATTEMPT_KEY, { count: 0, lockUntil: 0 });
+      writeJSON(SESSION_KEY, { expiresAt: Date.now() + SESSION_TTL_MS });
+      onPass();
+      return;
+    }
+    // wrong: progressive delay 1.5s, 3s, 6s, 12s, 24s, max 60s
+    const at = readJSON(ATTEMPT_KEY, { count: 0, lockUntil: 0 });
+    const newCount = at.count + 1;
+    const delay = Math.min(1500 * Math.pow(2, newCount - 1), 60000);
+    const lockUntil = Date.now() + delay;
+    writeJSON(ATTEMPT_KEY, { count: newCount, lockUntil });
+    setErr(`Неверный пароль. Попытка ${newCount}.`);
+    setPwd("");
+    setBusy(true); setWaitMs(delay);
+    const tick = setInterval(() => {
+      const ms = lockUntil - Date.now();
+      if (ms <= 0) { clearInterval(tick); setBusy(false); setWaitMs(0); inputRef.current?.focus(); }
+      else setWaitMs(ms);
+    }, 200);
+  };
+
+  const seconds = Math.ceil(waitMs / 1000);
+
+  return (
+    <div className="login-wrap">
+      <div className="login-card">
+        <div className="login-eyebrow">Нью Дуброво · Admin</div>
+        <h1 className="login-title">Закрытая <em>зона</em>.</h1>
+        <p className="login-sub">Доступ только для менеджеров. Все действия логируются локально на этом устройстве.</p>
+        <form onSubmit={submit}>
+          <label className="login-label" htmlFor="pwd">Пароль</label>
+          <input
+            ref={inputRef}
+            id="pwd"
+            className={"login-input" + (err ? " error" : "")}
+            type="password"
+            value={pwd}
+            onChange={(e) => { setPwd(e.target.value); if (err) setErr(""); }}
+            disabled={busy}
+            autoComplete="off"
+            spellCheck="false"
+          />
+          <button className="login-btn" type="submit" disabled={busy || !pwd}>
+            {busy ? `Подождите ${seconds} с` : "Войти"}
+          </button>
+          <div className="login-status">{err}</div>
+        </form>
+        <div className="login-foot">
+          <span>NEWDUBROVO.RU</span>
+          <span>v1.0</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Main ----------
+function Admin({ onLogout }) {
+  const [tab, setTab] = useState("leads");
+  const [leads, setLeads] = useState(() => readJSON(LEADS_KEY, []));
+  const [overrides, setOverrides] = useState(() => readJSON(PLOT_OVERRIDES_KEY, {}));
+  const [toast, setToast] = useState("");
+  const [now, setNow] = useState(() => new Date().toISOString());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date().toISOString()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const persistLeads = (next) => { setLeads(next); writeJSON(LEADS_KEY, next); };
+  const persistOverrides = (next) => { setOverrides(next); writeJSON(PLOT_OVERRIDES_KEY, next); };
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 1800);
+  };
+
+  // Cross-tab sync (e.g. landing form submits while admin is open)
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === LEADS_KEY) setLeads(readJSON(LEADS_KEY, []));
+      if (e.key === PLOT_OVERRIDES_KEY) setOverrides(readJSON(PLOT_OVERRIDES_KEY, {}));
+    };
+    window.addEventListener("storage", onStorage);
+    // also poll same-tab changes
+    const poll = setInterval(() => {
+      const fresh = readJSON(LEADS_KEY, []);
+      if (fresh.length !== leads.length) setLeads(fresh);
+    }, 2000);
+    return () => { window.removeEventListener("storage", onStorage); clearInterval(poll); };
+  }, [leads.length]);
+
+  const plots = useMemo(() => {
+    const base = (window.DUBROVO_DATA?.plots || []);
+    return base.map(p => {
+      const o = overrides[p.id] || {};
+      return { ...p, status: o.status || p.status, note: o.note || "" };
+    });
+  }, [overrides]);
+
+  const stats = useMemo(() => {
+    const ls = { total: leads.length };
+    STATUS_ORDER.forEach(s => ls[s] = leads.filter(l => l.status === s).length);
+    const ps = {
+      total: plots.length,
+      free: plots.filter(p => p.status === "free").length,
+      reserved: plots.filter(p => p.status === "reserved").length,
+      sold: plots.filter(p => p.status === "sold").length,
+      reconstruction: plots.filter(p => p.status === "reconstruction").length,
+    };
+    return { leads: ls, plots: ps };
+  }, [leads, plots]);
+
+  return (
+    <div className="shell">
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-logo">N</div>
+          <div>
+            <div className="brand-name">Нью Дуброво · База</div>
+            <div className="brand-sub">Управление заявками и участками</div>
+          </div>
+        </div>
+        <div className="topbar-right">
+          <span className="meta">{fmtDate(now)}</span>
+          <button className="topbar-btn danger" onClick={onLogout}>Выйти</button>
+        </div>
+      </header>
+
+      <div>
+        <nav className="tabs">
+          <button className={"tab" + (tab === "leads" ? " active" : "")} onClick={() => setTab("leads")}>
+            Заявки <span className="count">{stats.leads.total}</span>
+          </button>
+          <button className={"tab" + (tab === "plots" ? " active" : "")} onClick={() => setTab("plots")}>
+            Участки <span className="count">{stats.plots.total}</span>
+          </button>
+          <button className={"tab" + (tab === "overview" ? " active" : "")} onClick={() => setTab("overview")}>
+            Сводка
+          </button>
+        </nav>
+        <main className="panel">
+          {tab === "leads" && (
+            <LeadsPanel
+              leads={leads}
+              setLeads={persistLeads}
+              plots={plots}
+              showToast={showToast}
+            />
+          )}
+          {tab === "plots" && (
+            <PlotsPanel
+              plots={plots}
+              overrides={overrides}
+              setOverrides={persistOverrides}
+              showToast={showToast}
+            />
+          )}
+          {tab === "overview" && (
+            <OverviewPanel stats={stats} leads={leads} />
+          )}
+        </main>
+      </div>
+
+      <div className={"toast" + (toast ? " show" : "")}>{toast}</div>
+    </div>
+  );
+}
+
+// ---------- Leads ----------
+function LeadsPanel({ leads, setLeads, plots, showToast }) {
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [openId, setOpenId] = useState(null);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return leads.filter(l => {
+      if (statusFilter !== "all" && l.status !== statusFilter) return false;
+      if (!q) return true;
+      const blob = [l.name, l.phone, l.message, l.plotId, l.id].filter(Boolean).join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+  }, [leads, query, statusFilter]);
+
+  const updateLead = (id, patch) => {
+    setLeads(leads.map(l => l.id === id ? { ...l, ...patch } : l));
+  };
+  const deleteLead = (id) => {
+    if (!confirm("Удалить заявку безвозвратно?")) return;
+    setLeads(leads.filter(l => l.id !== id));
+    if (openId === id) setOpenId(null);
+    showToast("Заявка удалена");
+  };
+  const addNote = (id, text) => {
+    if (!text.trim()) return;
+    const lead = leads.find(l => l.id === id); if (!lead) return;
+    updateLead(id, { notes: [...(lead.notes || []), { text: text.trim(), at: new Date().toISOString() }] });
+    showToast("Заметка добавлена");
+  };
+
+  const addManualLead = () => {
+    const name = prompt("Имя клиента:"); if (!name) return;
+    const phone = prompt("Телефон:") || "";
+    const lead = {
+      id: "L" + Date.now().toString(36).toUpperCase(),
+      name: name.trim(), phone: phone.trim(), message: "",
+      plotId: null, source: "manual", status: "new", notes: [],
+      createdAt: new Date().toISOString(),
+    };
+    setLeads([lead, ...leads]);
+    showToast("Заявка добавлена");
+  };
+
+  const exportCSV = () => {
+    const rows = [
+      ["ID", "Создано", "Имя", "Телефон", "Сообщение", "Участок", "Статус", "Источник", "Заметок"],
+      ...filtered.map(l => [
+        l.id, fmtDate(l.createdAt), l.name, l.phone, l.message || "",
+        l.plotId || "", STATUS_LABELS[l.status] || l.status, l.source || "",
+        (l.notes || []).length,
+      ]),
+    ];
+    downloadCSV(`leads-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    showToast(`Экспортировано: ${filtered.length}`);
+  };
+
+  const openLead = leads.find(l => l.id === openId);
+
+  return (
+    <>
+      <div className="toolbar">
+        <input
+          className="search"
+          placeholder="Поиск по имени, телефону, сообщению, ID…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className="seg">
+          <button className={statusFilter === "all" ? "active" : ""} onClick={() => setStatusFilter("all")}>Все</button>
+          {STATUS_ORDER.map(s => (
+            <button key={s} className={statusFilter === s ? "active" : ""} onClick={() => setStatusFilter(s)}>
+              {STATUS_LABELS[s]}
+            </button>
+          ))}
+        </div>
+        <button className="btn ghost" onClick={addManualLead}>+ Заявка</button>
+        <button className="btn" onClick={exportCSV}>Экспорт CSV</button>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="empty">
+          <h3>Заявок пока нет</h3>
+          <p>Когда клиент отправит форму на лендинге, заявка появится здесь.</p>
+        </div>
+      ) : (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th className="num">ID</th>
+                <th>Создано</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Участок</th>
+                <th>Статус</th>
+                <th>Заметки</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(l => (
+                <tr key={l.id} className={l.id === openId ? "selected" : ""} onClick={() => setOpenId(l.id)} style={{ cursor: "pointer" }}>
+                  <td className="num">{l.id}</td>
+                  <td className="num">{fmtDate(l.createdAt)}</td>
+                  <td className="name">{l.name}</td>
+                  <td className="phone">{l.phone}</td>
+                  <td className="num">{l.plotId ? `№${l.plotId}` : "—"}</td>
+                  <td><span className={`badge ${l.status}`}>{STATUS_LABELS[l.status] || l.status}</span></td>
+                  <td className="num">{(l.notes || []).length || "—"}</td>
+                  <td className="actions" onClick={(e) => e.stopPropagation()}>
+                    <button className="icon-btn" onClick={() => setOpenId(l.id)}>Открыть</button>
+                    <button className="icon-btn danger" onClick={() => deleteLead(l.id)}>Удалить</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {openLead && (
+        <LeadDrawer
+          lead={openLead}
+          plots={plots}
+          onClose={() => setOpenId(null)}
+          onUpdate={(patch) => updateLead(openLead.id, patch)}
+          onDelete={() => deleteLead(openLead.id)}
+          onAddNote={(t) => addNote(openLead.id, t)}
+        />
+      )}
+    </>
+  );
+}
+
+function LeadDrawer({ lead, plots, onClose, onUpdate, onDelete, onAddNote }) {
+  const [noteText, setNoteText] = useState("");
+  return (
+    <>
+      <div className="drawer-back open" onClick={onClose}/>
+      <aside className="drawer open">
+        <div className="drawer-head">
+          <div>
+            <div className="eyebrow">{lead.id} · {fmtDate(lead.createdAt)}</div>
+            <h2>{lead.name || "Без имени"}</h2>
+          </div>
+          <button className="drawer-close" onClick={onClose}>Закрыть</button>
+        </div>
+        <div className="drawer-body">
+          <div className="drawer-row"><span className="lbl">Телефон</span><span className="val" style={{ fontFamily: "ui-monospace, Menlo, monospace" }}>{lead.phone || "—"}</span></div>
+          <div className="drawer-row"><span className="lbl">Сообщение</span><span className="val">{lead.message || "—"}</span></div>
+          <div className="drawer-row">
+            <span className="lbl">Участок</span>
+            <span className="val">
+              <select
+                value={lead.plotId || ""}
+                onChange={(e) => onUpdate({ plotId: e.target.value || null })}
+                style={{ padding: "8px 10px", border: "1px solid #D9CDB0", background: "#FFF", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12 }}
+              >
+                <option value="">— не выбран —</option>
+                {plots.map(p => (
+                  <option key={p.id} value={p.id}>№{p.id} · {p.area} сот · {PLOT_STATUS_LABELS[p.status]}</option>
+                ))}
+              </select>
+            </span>
+          </div>
+          <div className="drawer-row"><span className="lbl">Источник</span><span className="val" style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, color: "#5D5340" }}>{lead.source || "—"}</span></div>
+
+          <div className="drawer-section-title">Статус</div>
+          <div className="status-grid">
+            {STATUS_ORDER.map(s => (
+              <button key={s} className={lead.status === s ? "active" : ""} onClick={() => onUpdate({ status: s })}>
+                {STATUS_LABELS[s]}
+              </button>
+            ))}
+          </div>
+
+          <div className="drawer-section-title">Заметки ({(lead.notes || []).length})</div>
+          {(lead.notes || []).length === 0 && <div style={{ color: "#7A6A4A", fontSize: 12, marginBottom: 8 }}>Заметок пока нет.</div>}
+          {(lead.notes || []).slice().reverse().map((n, i) => (
+            <div className="note" key={i}>
+              <div className="meta">{fmtDate(n.at)}</div>
+              <div>{n.text}</div>
+            </div>
+          ))}
+          <div className="note-form">
+            <textarea
+              placeholder="Звонил, договорились на показ в субботу…"
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              onKeyDown={(e) => { if (e.metaKey && e.key === "Enter") { onAddNote(noteText); setNoteText(""); }}}
+            />
+            <button className="btn" onClick={() => { onAddNote(noteText); setNoteText(""); }}>+</button>
+          </div>
+
+          <div className="drawer-section-title">Опасная зона</div>
+          <button className="btn danger" onClick={onDelete}>Удалить заявку</button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+// ---------- Plots ----------
+function PlotsPanel({ plots, overrides, setOverrides, showToast }) {
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [openId, setOpenId] = useState(null);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return plots.filter(p => {
+      if (statusFilter !== "all" && p.status !== statusFilter) return false;
+      if (!q) return true;
+      const blob = [`№${p.id}`, p.id, p.area, p.street, p.cadastral].filter(Boolean).join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+  }, [plots, query, statusFilter]);
+
+  const setStatus = (id, status) => {
+    const next = { ...overrides, [id]: { ...(overrides[id] || {}), status } };
+    setOverrides(next);
+    showToast(`№${id} → ${PLOT_STATUS_LABELS[status]}`);
+  };
+  const setNote = (id, note) => {
+    const next = { ...overrides, [id]: { ...(overrides[id] || {}), note } };
+    setOverrides(next);
+  };
+  const resetAll = () => {
+    if (!confirm("Сбросить все ручные статусы и заметки участков?")) return;
+    setOverrides({});
+    showToast("Изменения сброшены");
+  };
+  const exportCSV = () => {
+    const rows = [
+      ["№", "Площадь, сот", "Улица", "Кадастр", "Статус", "Заметка"],
+      ...filtered.map(p => [p.id, p.area, p.street || "", p.cadastral || "", PLOT_STATUS_LABELS[p.status], p.note || ""]),
+    ];
+    downloadCSV(`plots-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    showToast(`Экспортировано: ${filtered.length}`);
+  };
+
+  const open = plots.find(p => p.id === openId);
+
+  return (
+    <>
+      <div className="toolbar">
+        <input
+          className="search"
+          placeholder="Поиск по номеру, площади, улице, кадастру…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className="seg">
+          <button className={statusFilter === "all" ? "active" : ""} onClick={() => setStatusFilter("all")}>Все</button>
+          <button className={statusFilter === "free" ? "active" : ""} onClick={() => setStatusFilter("free")}>Свободны</button>
+          <button className={statusFilter === "reserved" ? "active" : ""} onClick={() => setStatusFilter("reserved")}>Бронь</button>
+          <button className={statusFilter === "sold" ? "active" : ""} onClick={() => setStatusFilter("sold")}>Проданы</button>
+          <button className={statusFilter === "reconstruction" ? "active" : ""} onClick={() => setStatusFilter("reconstruction")}>Реконструкция</button>
+        </div>
+        <button className="btn ghost" onClick={resetAll}>Сброс</button>
+        <button className="btn" onClick={exportCSV}>Экспорт CSV</button>
+      </div>
+
+      <div className="plot-grid">
+        {filtered.map(p => (
+          <div key={p.id} className={"plot-card f-" + p.status} onClick={() => setOpenId(p.id)}>
+            <div className="num">№{p.id}</div>
+            <div className="area">{p.area} соток</div>
+            <span className={`badge ${p.status}`}>{PLOT_STATUS_LABELS[p.status]}</span>
+          </div>
+        ))}
+      </div>
+
+      {open && (
+        <PlotDrawer
+          plot={open}
+          onClose={() => setOpenId(null)}
+          onSetStatus={(s) => setStatus(open.id, s)}
+          onSetNote={(n) => setNote(open.id, n)}
+        />
+      )}
+    </>
+  );
+}
+
+function PlotDrawer({ plot, onClose, onSetStatus, onSetNote }) {
+  const [note, setNoteLocal] = useState(plot.note || "");
+  useEffect(() => { setNoteLocal(plot.note || ""); }, [plot.id]);
+
+  return (
+    <>
+      <div className="drawer-back open" onClick={onClose}/>
+      <aside className="drawer open">
+        <div className="drawer-head">
+          <div>
+            <div className="eyebrow">Участок</div>
+            <h2>№{plot.id}</h2>
+          </div>
+          <button className="drawer-close" onClick={onClose}>Закрыть</button>
+        </div>
+        <div className="drawer-body">
+          <div className="drawer-row"><span className="lbl">Площадь</span><span className="val">{plot.area} соток</span></div>
+          {plot.street && <div className="drawer-row"><span className="lbl">Улица</span><span className="val">{plot.street}</span></div>}
+          {plot.cadastral && <div className="drawer-row"><span className="lbl">Кадастр</span><span className="val" style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12 }}>{plot.cadastral}</span></div>}
+          {plot.price && <div className="drawer-row"><span className="lbl">Цена</span><span className="val">{plot.price}</span></div>}
+
+          <div className="drawer-section-title">Статус</div>
+          <div className="status-grid">
+            {["free", "reserved", "sold", "reconstruction"].map(s => (
+              <button key={s} className={plot.status === s ? "active" : ""} onClick={() => onSetStatus(s)}>
+                {PLOT_STATUS_LABELS[s]}
+              </button>
+            ))}
+          </div>
+
+          <div className="drawer-section-title">Заметка по участку</div>
+          <textarea
+            value={note}
+            onChange={(e) => setNoteLocal(e.target.value)}
+            onBlur={() => onSetNote(note)}
+            placeholder="Зарезервирован Ивановым до 12.05, 30%…"
+            style={{ width: "100%", minHeight: 100, background: "#FFF", border: "1px solid #D9CDB0", padding: "10px 12px", fontFamily: "Inter, sans-serif", fontSize: 13, outline: "none", resize: "vertical" }}
+          />
+        </div>
+      </aside>
+    </>
+  );
+}
+
+// ---------- Overview ----------
+function OverviewPanel({ stats, leads }) {
+  const recent = leads.slice(0, 5);
+  return (
+    <>
+      <div className="stat-row">
+        <div className="stat"><div className="v">{stats.leads.total}</div><div className="l">Всего заявок</div></div>
+        <div className="stat"><div className="v">{stats.leads.new}</div><div className="l">Новых</div></div>
+        <div className="stat"><div className="v">{stats.plots.free}</div><div className="l">Свободных участков</div></div>
+        <div className="stat"><div className="v">{stats.plots.reserved + stats.plots.sold}</div><div className="l">В работе / проданы</div></div>
+      </div>
+
+      <div className="drawer-section-title" style={{ marginTop: 0 }}>Последние заявки</div>
+      {recent.length === 0 ? (
+        <div className="empty"><h3>Пусто</h3><p>Заявок пока нет.</p></div>
+      ) : (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Создано</th><th>Имя</th><th>Телефон</th><th>Статус</th></tr>
+            </thead>
+            <tbody>
+              {recent.map(l => (
+                <tr key={l.id}>
+                  <td className="num">{fmtDate(l.createdAt)}</td>
+                  <td className="name">{l.name}</td>
+                  <td className="phone">{l.phone}</td>
+                  <td><span className={`badge ${l.status}`}>{STATUS_LABELS[l.status] || l.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---------- Root ----------
+function App() {
+  const [authed, setAuthed] = useState(() => {
+    const s = readJSON(SESSION_KEY, null);
+    return !!(s && s.expiresAt > Date.now());
+  });
+
+  const logout = () => {
+    localStorage.removeItem(SESSION_KEY);
+    setAuthed(false);
+  };
+
+  if (!authed) return <LoginScreen onPass={() => setAuthed(true)} />;
+  return <Admin onLogout={logout} />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
